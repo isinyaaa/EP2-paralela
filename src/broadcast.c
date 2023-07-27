@@ -8,7 +8,7 @@
 #define NOT_READ -1
 #define MAX_VAL 1000
 
-// Procedimento auxiliar para inicializar o gerador de 
+// Procedimento auxiliar para inicializar o gerador de
 // numeros pseudo-aleatorios (PRNG).
 // Utiliza-se o Unix time em microssegundos (us) como seed.
 void initialize_prng() {
@@ -134,7 +134,7 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
     // Leitura dos argumentos de linha de comando
-    int array_size, root; 
+    int array_size, root;
     bool is_custom_bcast;
     parse_arguments(argc, argv, &array_size, &is_custom_bcast, &root);
 
@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
     // com inteiros entre 0 e MAX_VAL.
     // Usando o operador % pois nao estamos preocupados
     // se os valores possuem distribuicao uniforme.
-    // O limite MAX_VAL eh arbitrario, apenas para facilitar 
+    // O limite MAX_VAL eh arbitrario, apenas para facilitar
     // a verificacao do resultado.
     int *buf = (int *) malloc(array_size * sizeof(int));
     if (!buf) {
