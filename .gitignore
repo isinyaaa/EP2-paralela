@@ -1,1 +1,4 @@
 /src/broadcast
+/data/
+/plots/
+*.DS_Store
