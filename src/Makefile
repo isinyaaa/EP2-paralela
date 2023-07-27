@@ -12,4 +12,3 @@ debug: $(NAME)
 .PHONY: clean
 clean:
 	rm $(NAME)
-	
