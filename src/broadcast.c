@@ -78,50 +78,37 @@ void parse_arguments(
     }
 }
 
-int custom_bcast(
-    void *buffer,
-    int count,
-    MPI_Datatype datatype,
-    int root,
-    MPI_Comm comm ) {
+int custom_bcast(void *buffer, int count, MPI_Datatype datatype,
+                 int root, MPI_Comm comm) {
 
-    // Variáveis para armazenar o número de processos e o rank do processo atual
-    int size, rank, i;
+    int procn, rank;
     MPI_Status status;
 
-    // Obtém o número de processos
-    MPI_Comm_size(comm, &size);
-    // Obtém o rank do processo atual
+    MPI_Comm_size(comm, &procn);
     MPI_Comm_rank(comm, &rank);
 
-    // Verifica se o processo atual é o processo root
-    if (rank == root) {
-        // Se sim, então ele envia o buffer para todos os outros processos
-        for(i = 0; i < size; i++) {
-            // Exclui o processo root da operação de envio
-            if(i != rank) {
-                // Envia o buffer para o processo 'i'
-                int err = MPI_Send(buffer, count, datatype, i, 0, comm);
-                // Verifica se houve erro no envio
-                if (err != MPI_SUCCESS) {
-                    // Se sim, imprime uma mensagem de erro e retorna o código de erro
-                    fprintf(stderr, "Error sending data to process %d\n", i);
-                    return err;
-                }
-            }
-        }
-    } else {
-        // Se o processo atual não é o root, ele deve receber o buffer do processo root
+    if (rank != root) {
         int err = MPI_Recv(buffer, count, datatype, root, 0, comm, &status);
-        // Verifica se houve erro no recebimento
+
         if (err != MPI_SUCCESS) {
-            // Se sim, imprime uma mensagem de erro e retorna o código de erro
             fprintf(stderr, "Error receiving data from root process %d\n", root);
+            return err;
+        }
+        return MPI_SUCCESS;
+    }
+
+    for(int i = 0; i < procn; i++) {
+        if(i == rank)
+            continue;
+
+        int err = MPI_Send(buffer, count, datatype, i, 0, comm);
+
+        if (err != MPI_SUCCESS) {
+            fprintf(stderr, "Error sending data to process %d\n", i);
             return err;
         }
     }
 
-    // Se todas as operações de envio e recebimento foram bem-sucedidas, retorna MPI_SUCCESS
     return MPI_SUCCESS;
 
 }
